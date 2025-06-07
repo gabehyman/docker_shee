@@ -13,39 +13,56 @@ def home():
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <title>📽️ SMS Log</title>
+        <title>📽️ content requests</title>
         <style>
-            html, body {
+            * {
                 margin: 0;
                 padding: 0;
+                box-sizing: border-box;
+            }
+            html, body {
                 height: 100%;
                 font-family: "Segoe UI", sans-serif;
-                color: white;
-                overflow: auto;
-                background-color: black;
+                overflow-x: hidden;
+                position: relative;
+                background: transparent;
             }
-            .bg-video {
+            .bg-wrapper {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 100vw;
-                height: 100vh;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+            }
+            .bg-video {
+                width: 100%;
+                height: 100%;
                 object-fit: cover;
-                z-index: -100;
                 filter: brightness(40%);
                 pointer-events: none;
             }
             .container {
                 position: relative;
+                z-index: 1;
                 padding: 40px;
                 max-width: 900px;
                 margin: auto;
             }
             h1 {
-                font-size: 3rem;
+                font-size: 5rem;
                 text-align: center;
                 margin-bottom: 30px;
+                color: white;
                 text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            }
+            p {
+                font-size: 1.6rem;
+                color: white;
+                text-align: center;
+                margin-top: 50px;
+                text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
             }
             .log-card {
                 background: rgba(0, 0, 0, 0.6);
@@ -57,13 +74,16 @@ def home():
                 line-height: 1.5;
                 white-space: pre-wrap;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                color: white;
             }
         </style>
     </head>
     <body>
-        <video autoplay muted loop playsinline preload="auto" class="bg-video">
-            <source src="{{ url_for('static', filename='popcorn.mp4') }}" type="video/mp4">
-        </video>
+        <div class="bg-wrapper">
+            <video autoplay muted loop playsinline preload="auto" class="bg-video">
+                <source src="{{ url_for('static', filename='popcorn.mp4') }}" type="video/mp4">
+            </video>
+        </div>
         <div class="container">
             <h1>🎬 content requests</h1>
             {% for log in logs %}
