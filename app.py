@@ -4,7 +4,7 @@ import threading
 import datetime
 import html
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="/static")
 logs = []  # This will store all messages and outputs
 
 @app.route("/")
@@ -26,13 +26,14 @@ def home():
             }
             .bg-video {
                 position: fixed;
-                right: 0;
-                bottom: 0;
-                min-width: 100%;
-                min-height: 100%;
-                z-index: -1;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                z-index: -100;
                 filter: brightness(40%);
+                pointer-events: none;
             }
             .container {
                 position: relative;
@@ -60,11 +61,11 @@ def home():
         </style>
     </head>
     <body>
-        <video autoplay muted loop class="bg-video">
+        <video autoplay muted loop playsinline preload="auto" class="bg-video">
             <source src="{{ url_for('static', filename='popcorn.mp4') }}" type="video/mp4">
         </video>
         <div class="container">
-            <h1>🎬 Incoming Message Log</h1>
+            <h1>🎬 content requests</h1>
             {% for log in logs %}
                 <div class="log-card">
                     <strong>({{ log['time'] }})</strong><br>
@@ -72,7 +73,7 @@ def home():
                     <span>→ <code>{{ log['output'] }}</code></span>
                 </div>
             {% else %}
-                <p>No messages yet.</p>
+                <p>no requests yet.</p>
             {% endfor %}
         </div>
     </body>
