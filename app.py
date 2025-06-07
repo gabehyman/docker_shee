@@ -10,16 +10,76 @@ logs = []  # This will store all messages and outputs
 @app.route("/")
 def home():
     html_page = """
-    <h1>📬 Message Log</h1>
-    {% for log in logs %}
-        <div style="padding:10px; border-bottom:1px solid #ccc;">
-            <code>({{ log['time'] }}) {{ log['from'] }}: {{ log['input'] }} → {{ log['output'] }}</code>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>📽️ SMS Log</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: "Segoe UI", sans-serif;
+                color: white;
+                overflow: auto;
+                background-color: black;
+            }
+            .bg-video {
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: -1;
+                object-fit: cover;
+                filter: brightness(40%);
+            }
+            .container {
+                position: relative;
+                padding: 40px;
+                max-width: 900px;
+                margin: auto;
+            }
+            h1 {
+                font-size: 3rem;
+                text-align: center;
+                margin-bottom: 30px;
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            }
+            .log-card {
+                background: rgba(0, 0, 0, 0.6);
+                border-left: 4px solid #FFD700;
+                padding: 15px 20px;
+                margin-bottom: 15px;
+                border-radius: 6px;
+                font-size: 1.1rem;
+                line-height: 1.5;
+                white-space: pre-wrap;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            }
+        </style>
+    </head>
+    <body>
+        <video autoplay muted loop class="bg-video">
+            <source src="{{ url_for('static', filename='popcorn.mp4') }}" type="video/mp4">
+        </video>
+        <div class="container">
+            <h1>🎬 Incoming Message Log</h1>
+            {% for log in logs %}
+                <div class="log-card">
+                    <strong>({{ log['time'] }})</strong><br>
+                    <span><strong>{{ log['from'] }}</strong>: {{ log['input'] }}</span><br>
+                    <span>→ <code>{{ log['output'] }}</code></span>
+                </div>
+            {% else %}
+                <p>No messages yet.</p>
+            {% endfor %}
         </div>
-    {% else %}
-        <p>No messages yet.</p>
-    {% endfor %}
+    </body>
+    </html>
     """
     return render_template_string(html_page, logs=logs)
+
 
 def handle_task(user_input, phone_number):
     try:
