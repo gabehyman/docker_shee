@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, jsonify
 import subprocess
 import threading
 import datetime
@@ -87,16 +87,47 @@ def home():
         </div>
         <div class="container">
             <h1>🎬 content requests</h1>
-            {% for log in logs %}
-                <div class="log-card">
-                    <strong>({{ log['time'] }})</strong><br>
-                    <span><strong>{{ log['from'] }}</strong>: {{ log['input'] }}</span><br>
-                    <span>→ <code>{{ log['output'] }}</code></span>
-                </div>
-            {% else %}
-                <p>no requests yet.</p>
-            {% endfor %}
+            <div id="log-container">
+                {% for log in logs %}
+                    <div class="log-card">
+                        <strong>({{ log['time'] }})</strong><br>
+                        <span><strong>{{ log['from'] }}</strong>: {{ log['input'] }}</span><br>
+                        <span>→ <code>{{ log['output'] }}</code></span>
+                    </div>
+                {% else %}
+                    <p>no requests yet.</p>
+                {% endfor %}
+            </div>
         </div>
+        <script>
+            let lastLogCount = {{ logs|length }};
+
+            function fetchLogs() {
+                fetch("/logs.json")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length > lastLogCount) {
+                            const newLogs = data.slice(lastLogCount);
+                            const container = document.getElementById("log-container");
+
+                            newLogs.forEach(log => {
+                                const div = document.createElement("div");
+                                div.className = "log-card";
+                                div.innerHTML = `
+                                    <strong>(${log.time})</strong><br>
+                                    <span><strong>${log.from}</strong>: ${log.input}</span><br>
+                                    <span>→ <code>${log.output}</code></span>
+                                `;
+                                container.appendChild(div);
+                            });
+
+                            lastLogCount = data.length;
+                        }
+                    });
+            }
+
+            setInterval(fetchLogs, 5000); // check every 5 seconds
+        </script>
     </body>
     </html>
     """
@@ -139,6 +170,10 @@ def webhook():
 <Response>
     <Message>{html.escape(result.strip())}</Message>
 </Response>""", 200, {"Content-Type": "application/xml"}
+
+@app.route("/logs.json")
+def get_logs_json():
+    return jsonify(logs)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
