@@ -14,7 +14,6 @@ def home():
     <html lang="en">
     <head>
         <title>📽️ content requests</title>
-        <meta http-equiv="refresh" content="10">
         <style>
             * {
                 margin: 0;
