@@ -112,7 +112,7 @@ def handle_task(user_input, phone_number):
 def webhook():
     from_number = request.form.get("From", "").strip()
     body = request.form.get("Body", "").strip()
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")
 
     # try:
     #     result = threading.Thread(
