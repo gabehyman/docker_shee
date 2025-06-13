@@ -5,7 +5,7 @@ import datetime
 import html
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
-logs = []  # This will store all messages and outputs
+logs = []  # this will store all messages and outputs
 
 @app.route("/")
 def home():
